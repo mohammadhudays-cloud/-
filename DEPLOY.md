@@ -7,7 +7,7 @@
 | العنصر | الحالة |
 |---|---|
 | الكود على GitHub | ✅ مرفوع على فرع `claude/professional-license-platform-lqew7q` |
-| قاعدة البيانات Supabase | ✅ جاهزة ومعبّأة (3 مجالات، 21 موضوعاً، 315 سؤالاً) |
+| قاعدة البيانات Supabase | ✅ مشروع مستقل `rukhsa-mihaniya` معبّأ (3 مجالات، 21 موضوعاً، 315 سؤالاً) |
 | مشروع Netlify | ✅ مُنشأ باسم `rukhsa-mihaniya-platform` |
 | نشر الموقع | ⏳ يحتاج ربط المستودع (خطوة واحدة أدناه) |
 
@@ -48,6 +48,16 @@ npx netlify-cli deploy --prod --dir=dist --site 5692130f-7e16-4a8b-982c-b72d8b55
 | `NETLIFY_SITE_ID` | `5692130f-7e16-4a8b-982c-b72d8b55778e` |
 
 بعدها سيُنشر الموقع تلقائياً مع كل `push`.
+
+## مشروع Supabase
+
+المنصة لها **مشروع Supabase مستقل تماماً** لا يشترك مع أي تطبيق آخر:
+
+- **الاسم:** `rukhsa-mihaniya`
+- **المعرّف (ref):** `tjwtqyqdxadwodyzxbna`
+- **الرابط:** https://tjwtqyqdxadwodyzxbna.supabase.co
+
+مستخدمو المنصة منفصلون تماماً عن مستخدمي أي مشروع آخر لديك.
 
 ## ملاحظة عن متغيرات البيئة
 
