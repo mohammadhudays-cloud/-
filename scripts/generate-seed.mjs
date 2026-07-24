@@ -1,11 +1,31 @@
 // يولّد ملفات SQL لتعبئة قاعدة البيانات + ملف bank.json المدمج في الواجهة
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs';
 
 const sections = JSON.parse(readFileSync('data/sections.json', 'utf8'));
 const topics = JSON.parse(readFileSync('data/topics.json', 'utf8'));
-const questions = ['tarbawi', 'kammi', 'lughawi'].flatMap((f) =>
-  JSON.parse(readFileSync(`data/questions/${f}.json`, 'utf8'))
+
+// كل ملفات الأسئلة في المجلد تُدمج تلقائياً، فيكفي إضافة ملف جديد لتوسعة البنك
+const questionFiles = readdirSync('data/questions')
+  .filter((f) => f.endsWith('.json'))
+  .sort();
+const questions = questionFiles.flatMap((f) =>
+  JSON.parse(readFileSync(`data/questions/${f}`, 'utf8'))
 );
+
+// التحقق من سلامة البنك قبل التوليد
+const topicSlugs = new Set(topics.map((t) => t.slug));
+const seen = new Set();
+for (const q of questions) {
+  if (seen.has(q.id)) throw new Error(`معرّف مكرر: ${q.id}`);
+  seen.add(q.id);
+  if (!topicSlugs.has(q.topic)) throw new Error(`موضوع غير معروف "${q.topic}" في ${q.id}`);
+  if (!Array.isArray(q.options) || q.options.length !== 4)
+    throw new Error(`عدد الخيارات ليس 4 في ${q.id}`);
+  if (!Number.isInteger(q.answer) || q.answer < 0 || q.answer > 3)
+    throw new Error(`إجابة غير صالحة في ${q.id}`);
+  if (!q.explanation) throw new Error(`لا يوجد شرح في ${q.id}`);
+  if (![1, 2, 3].includes(q.difficulty)) throw new Error(`صعوبة غير صالحة في ${q.id}`);
+}
 
 const q = (s) => `'${String(s).replace(/'/g, "''")}'`;
 
