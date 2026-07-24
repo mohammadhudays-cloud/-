@@ -25,17 +25,60 @@ export default function Auth() {
     setMsg(null)
     try {
       if (tab === 'signup') {
-        const { error } = await supabase.auth.signUp({ email, password })
+        const { data, error } = await supabase.auth.signUp({ email, password })
         if (error) throw error
+
+        // Supabase returns a success with an empty `identities` array when the
+        // email is already registered (anti-enumeration). No account is created
+        // and no email is sent — so tell the user to sign in instead of leaving
+        // them waiting for a message that will never arrive.
+        if (data.user && data.user.identities && data.user.identities.length === 0) {
+          setTab('signin')
+          setMsg({
+            kind: 'err',
+            text: 'هذا البريد مسجّل مسبقاً ولن يصلك بريد تأكيد. سجّل الدخول بكلمة مرورك، أو أعد تعيينها إن نسيتها.',
+          })
+          return
+        }
+
+        // When email confirmation is disabled, a session comes back right away.
+        if (data.session) {
+          nav('/', { replace: true })
+          return
+        }
+
         setMsg({
           kind: 'ok',
-          text: 'تم إنشاء الحساب! إن طُلب تأكيد البريد فتحقق من صندوق الوارد، ثم سجّل الدخول.',
+          text: 'تم إنشاء الحساب! تحقق من بريدك (ومجلد الرسائل غير المرغوبة) لتأكيد الحساب ثم سجّل الدخول.',
         })
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw error
         nav('/', { replace: true })
       }
+    } catch (err) {
+      setMsg({ kind: 'err', text: translateError((err as Error).message) })
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function resetPassword() {
+    if (!email) {
+      setMsg({ kind: 'err', text: 'اكتب بريدك الإلكتروني أولاً ثم اضغط «نسيت كلمة المرور».' })
+      return
+    }
+    setBusy(true)
+    setMsg(null)
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth`,
+      })
+      if (error) throw error
+      setMsg({
+        kind: 'ok',
+        text: 'أُرسل رابط إعادة تعيين كلمة المرور إلى بريدك (تحقق من مجلد الرسائل غير المرغوبة).',
+      })
     } catch (err) {
       setMsg({ kind: 'err', text: translateError((err as Error).message) })
     } finally {
@@ -95,6 +138,17 @@ export default function Auth() {
             {busy ? 'جارٍ…' : tab === 'signin' ? 'دخول' : 'إنشاء الحساب'}
           </Button>
         </form>
+
+        {tab === 'signin' && (
+          <button
+            type="button"
+            onClick={resetPassword}
+            disabled={busy}
+            className="mt-4 block w-full text-center text-sm font-bold text-muted hover:text-brand-600 disabled:opacity-50"
+          >
+            نسيت كلمة المرور؟
+          </button>
+        )}
       </Card>
 
       <button
