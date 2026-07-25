@@ -51,9 +51,16 @@ export function shuffle<T>(arr: T[]): T[] {
 export function buildExamSet(size = 88): Question[] {
   // weights roughly reflecting the general exam emphasis
   const weights: Record<string, number> = { tarbawi: 0.55, kammi: 0.25, lughawi: 0.2 }
+  // Sections with no questions yet must not swallow their share of the exam,
+  // so the weights are renormalised over the sections that actually have items.
+  const available = sections.filter((s) => questionsOfSection(s.slug).length > 0)
+  const totalWeight = available.reduce(
+    (sum, s) => sum + (weights[s.slug] ?? 1 / sections.length),
+    0
+  )
   const picked: Question[] = []
-  for (const s of sections) {
-    const w = weights[s.slug] ?? 1 / sections.length
+  for (const s of available) {
+    const w = (weights[s.slug] ?? 1 / sections.length) / (totalWeight || 1)
     const n = Math.round(size * w)
     picked.push(...shuffle(questionsOfSection(s.slug)).slice(0, n))
   }

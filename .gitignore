@@ -15,9 +15,13 @@ dist-ssr
 .env.local
 .env.*.local
 
-# build artifacts / screenshots
+# build artifacts / test screenshots / scratch scripts
 shot-*.png
+s-*.png
+auth-shot.png
 smoke*.mjs
+v.mjs
+verify.mjs
 .netlify
 
 # Editor directories and files
