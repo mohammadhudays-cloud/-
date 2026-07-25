@@ -70,20 +70,26 @@ export function SectionPage() {
           </div>
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
-          <Button
-            onClick={() => {
-              startPractice({
-                questions: questionsOfSection(s.slug),
-                title: `تدريب — ${s.title}`,
-                section_slug: s.slug,
-                topic_slug: null,
-                origin: `/study/${s.slug}`,
-              })
-              nav('/run')
-            }}
-          >
-            ✏️ تدرب على المجال كامل
-          </Button>
+          {questionsOfSection(s.slug).length > 0 ? (
+            <Button
+              onClick={() => {
+                startPractice({
+                  questions: questionsOfSection(s.slug),
+                  title: `تدريب — ${s.title}`,
+                  section_slug: s.slug,
+                  topic_slug: null,
+                  origin: `/study/${s.slug}`,
+                })
+                nav('/run')
+              }}
+            >
+              ✏️ تدرب على المجال كامل
+            </Button>
+          ) : (
+            <p className="rounded-xl bg-amber-50 px-4 py-2.5 text-sm font-bold text-amber-800 dark:bg-amber-900/30 dark:text-amber-200">
+              📚 الملخصات متاحة، ولم تُضَف أسئلة هذا المجال بعد.
+            </p>
+          )}
         </div>
       </header>
 
@@ -141,21 +147,23 @@ export function TopicPage() {
             <Badge>{qs.length} سؤال تدريبي</Badge>
           </div>
         </div>
-        <Button
-          size="lg"
-          onClick={() => {
-            startPractice({
-              questions: qs,
-              title: `تدريب — ${t.title}`,
-              section_slug: s.slug,
-              topic_slug: t.slug,
-              origin: `/study/${s.slug}/${t.slug}`,
-            })
-            nav('/run')
-          }}
-        >
-          ✏️ تدرب على هذا الموضوع
-        </Button>
+        {qs.length > 0 && (
+          <Button
+            size="lg"
+            onClick={() => {
+              startPractice({
+                questions: qs,
+                title: `تدريب — ${t.title}`,
+                section_slug: s.slug,
+                topic_slug: t.slug,
+                origin: `/study/${s.slug}/${t.slug}`,
+              })
+              nav('/run')
+            }}
+          >
+            ✏️ تدرب على هذا الموضوع
+          </Button>
+        )}
       </header>
 
       <article className="surface rounded-2xl border border-app p-5 sm:p-7">
@@ -163,22 +171,28 @@ export function TopicPage() {
       </article>
 
       <div className="flex justify-center">
-        <Button
-          size="lg"
-          variant="soft"
-          onClick={() => {
-            startPractice({
-              questions: qs,
-              title: `تدريب — ${t.title}`,
-              section_slug: s.slug,
-              topic_slug: t.slug,
-              origin: `/study/${s.slug}/${t.slug}`,
-            })
-            nav('/run')
-          }}
-        >
-          جاهز؟ ابدأ التدريب على {qs.length} سؤالاً ←
-        </Button>
+        {qs.length > 0 ? (
+          <Button
+            size="lg"
+            variant="soft"
+            onClick={() => {
+              startPractice({
+                questions: qs,
+                title: `تدريب — ${t.title}`,
+                section_slug: s.slug,
+                topic_slug: t.slug,
+                origin: `/study/${s.slug}/${t.slug}`,
+              })
+              nav('/run')
+            }}
+          >
+            جاهز؟ ابدأ التدريب على {qs.length} سؤالاً ←
+          </Button>
+        ) : (
+          <p className="rounded-xl bg-amber-50 px-4 py-3 text-center text-sm font-bold text-amber-800 dark:bg-amber-900/30 dark:text-amber-200">
+            📚 هذا الملخص للمذاكرة، ولم تُضَف أسئلة تدريبية لهذا الموضوع بعد.
+          </p>
+        )}
       </div>
     </div>
   )

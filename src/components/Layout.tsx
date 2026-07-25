@@ -108,7 +108,7 @@ export default function Layout() {
 
       {!focus && (
         <footer className="border-t border-app py-6 text-center text-xs text-muted">
-          منصة تدريبية غير رسمية لإعداد المعلمين لاختبار الرخصة المهنية العام · بُنيت للأغراض التعليمية
+          منصة تدريبية خاصة لإعداد المعلمين لاختبار الرخصة المهنية العام · للاستخدام التعليمي
         </footer>
       )}
     </div>

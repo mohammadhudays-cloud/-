@@ -74,35 +74,39 @@ export default function Practice() {
             hint={`${allQuestions.length} سؤال`}
             icon="🎯"
           />
-          {sections.map((s) => (
-            <div key={s.slug}>
-              <ScopeRow
-                active={scope === s.slug}
-                onClick={() => setScope(s.slug)}
-                label={s.title}
-                hint={`${questionsOfSection(s.slug).length} سؤال`}
-                icon={s.icon}
-              />
-              {(scope === s.slug || scope.startsWith(`${s.slug}:`)) && (
-                <div className="mt-2 mr-6 grid gap-1.5 border-r-2 border-brand-200 pr-3 dark:border-brand-800">
-                  {topicsOfSection(s.slug).map((t) => (
-                    <button
-                      key={t.slug}
-                      onClick={() => setScope(`${s.slug}:${t.slug}`)}
-                      className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold transition ${
-                        scope === `${s.slug}:${t.slug}`
-                          ? 'bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-200'
-                          : 'text-muted hover:bg-[var(--bg)]'
-                      }`}
-                    >
-                      <span>{t.title}</span>
-                      <span className="tabular text-xs">{questionsOfTopic(t.slug).length}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+          {sections
+            .filter((s) => questionsOfSection(s.slug).length > 0)
+            .map((s) => (
+              <div key={s.slug}>
+                <ScopeRow
+                  active={scope === s.slug}
+                  onClick={() => setScope(s.slug)}
+                  label={s.title}
+                  hint={`${questionsOfSection(s.slug).length} سؤال`}
+                  icon={s.icon}
+                />
+                {(scope === s.slug || scope.startsWith(`${s.slug}:`)) && (
+                  <div className="mt-2 mr-6 grid gap-1.5 border-r-2 border-brand-200 pr-3 dark:border-brand-800">
+                    {topicsOfSection(s.slug)
+                      .filter((t) => questionsOfTopic(t.slug).length > 0)
+                      .map((t) => (
+                        <button
+                          key={t.slug}
+                          onClick={() => setScope(`${s.slug}:${t.slug}`)}
+                          className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold transition ${
+                            scope === `${s.slug}:${t.slug}`
+                              ? 'bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-200'
+                              : 'text-muted hover:bg-[var(--bg)]'
+                          }`}
+                        >
+                          <span>{t.title}</span>
+                          <span className="tabular text-xs">{questionsOfTopic(t.slug).length}</span>
+                        </button>
+                      ))}
+                  </div>
+                )}
+              </div>
+            ))}
         </div>
       </Section>
 
